@@ -1,2 +1,0 @@
-dags/CAMA/ANALOG.txt
-dags/CAMA/TEXT.txt
