@@ -2,20 +2,6 @@ import json
 import pandas as pd
 import os
 
-# env_vars = []
-# with open('Local_pipelien_env.env') as f:
-#     for line in f:
-#         if line.startswith('#') or not line.strip():
-#             continue
-#         # if 'export' not in line:
-#         #     continue
-#         # Remove leading `export `, if you have those
-#         # then, split name / value pair
-#         # key, value = line.replace('export ', '', 1).strip().split('=', 1)
-#         key, value = line.strip().split('=', 1)
-#         # os.environ[key] = value  # Load to local environ
-#         env_vars.append({'name': key, 'value': value}) # Save to a list
-
 """PPM_ID = C4
 Project Code = C5
 Interface Name = C6
@@ -44,6 +30,7 @@ class GenerateExcel(object):
     def __init__(self):
         CUR_DIR = os.getcwd()
         print(CUR_DIR)
+        print(os.environ)
         SANDBOX = os.environ['SANDBOX']
         WORK_TABLE_NAME = os.environ['WORK_TABLE_NAME']
         DATA_RETENTION = os.environ['DATA_RETENTION']
