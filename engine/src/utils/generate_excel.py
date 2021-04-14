@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import os
+
 # env_vars = []
 # with open('Local_pipelien_env.env') as f:
 #     for line in f:
@@ -42,19 +43,20 @@ class GenerateExcel(object):
 
     def __init__(self):
         CUR_DIR = os.getcwd()
-        SANDBOX=os.environ['SANDBOX']
-        WORK_TABLE_NAME=os.environ['WORK_TABLE_NAME']
-        DATA_RETENTION=os.environ['DATA_RETENTION']
-        DATE_FIELD_DRIVING_HISTORIZATION=os.environ['DATE_FIELD_DRIVING_HISTORIZATION']
-        IGNORE_FIELD_CDC=os.environ['IGNORE_FIELD_CDC']
-        TRANSCODE_FIELD_NAME=os.environ['TRANSCODE_FIELD_NAME']
-        DELETE_INFO=os.environ['DELETE_INFO']
-        SOURCE_FILE_PATH=os.environ['SOURCE_FILE_PATH']
-        ARCHIVE_DEL_FLAG=os.environ['ARCHIVE_DEL_FLAG']
-        JOB_NAME=os.environ['JOB_NAME']
-        SCHEDULE_NAME=os.environ['SCHEDULE_NAME']
-        SCHEMA_NAME=os.environ['SCHEMA_NAME']
-        TABLE_NAME=os.environ['TABLE_NAME']
+        print(CUR_DIR)
+        SANDBOX = os.environ['SANDBOX']
+        WORK_TABLE_NAME = os.environ['WORK_TABLE_NAME']
+        DATA_RETENTION = os.environ['DATA_RETENTION']
+        DATE_FIELD_DRIVING_HISTORIZATION = os.environ['DATE_FIELD_DRIVING_HISTORIZATION']
+        IGNORE_FIELD_CDC = os.environ['IGNORE_FIELD_CDC']
+        TRANSCODE_FIELD_NAME = os.environ['TRANSCODE_FIELD_NAME']
+        DELETE_INFO = os.environ['DELETE_INFO']
+        SOURCE_FILE_PATH = os.environ['SOURCE_FILE_PATH']
+        ARCHIVE_DEL_FLAG = os.environ['ARCHIVE_DEL_FLAG']
+        JOB_NAME = os.environ['JOB_NAME']
+        SCHEDULE_NAME = os.environ['SCHEDULE_NAME']
+        SCHEMA_NAME = os.environ['SCHEMA_NAME']
+        TABLE_NAME = os.environ['TABLE_NAME']
 
     # def get_json_file_list(self):
     #     files_list = list()
