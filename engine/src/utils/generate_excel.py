@@ -207,7 +207,7 @@ class GenerateExcel(object):
 
         file_path = CUR_DIR +'/engine/sources/15. Source Inventory/SOURCE INTERFACE 02.05.000/'
         file_path = file_path + schema_name +'/'+ table_name+'.json'
-        folder = CUR_DIR+"engine/targets/+"schema_name
+        folder = CUR_DIR+"/engine/targets/"+schema_name
         try:
             os.mkdir(folder)
         except:
