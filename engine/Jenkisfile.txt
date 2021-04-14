@@ -1,0 +1,128 @@
+pipeline {
+   agent any
+   environment {
+       GIT_COMMIT = ""
+       GIT_COMMIT_SHORT = sh(
+               script: "",
+               returnStdout: true
+       )
+   }
+   stages {
+       stage('Prepare') {
+           steps {
+               echo sh(script: 'env|sort', returnStdout: true)
+               checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/kozakjefferson/capstone_project.git']]])
+           }
+
+       }
+
+       stage('TriggerJenkinsJob') {
+           steps {
+
+                   sh 'echo "BEGIN Checkout"'
+                   // withPythonEnv('python3.5') {
+                   // sh "python --version"
+                   // sh "pip -V"
+                   // }
+               // sh "ls"
+               // echo "${checkout}"
+               // def gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+               // sh 'echo ${gitCommit}'
+
+           script {
+                   def date = new Date()
+                   echo "${date}"
+                   //  def specificCause = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
+                   // echo "specificCause: $specificCause.userName"
+
+
+                   // sh "ls"
+                   // echo "${BUILD_USER_ID}"
+
+                   commit = sh(returnStdout: true, script: 'git log -n 1 --pretty=format:%h').trim()
+                   echo "${commit}"
+                   FILES_CHANGED = sh (script: "git show --pretty='format:' --name-only $commit",returnStdout: true)
+                   echo "${FILES_CHANGED}"
+
+                   sh "rm -rf files_changex.txt;git show --pretty='format:' --name-only $commit > files_changex.txt"
+                   // sh "cat files_changex.txt"
+                   def browsers =   readFile(file: 'files_changex.txt')
+                   def lines = browsers.readLines()
+
+                   for (int i = 0; i < lines.size(); ++i) {
+                       if ( "${lines[i]}".contains("dags") ){
+                           println "build_deploy"
+                           echo "contains modification on dags"
+                           def envs =   readFile(file: "${lines[i]}")
+                           def vars = envs.readLines()
+                           // for (int k = 0; k < vars.size(); ++k) {
+                           //     echo "${vars[k]}"
+                           // }
+                           echo "${vars}"
+                           build job: 'jenkins_excel_creation',
+                           parameters: [
+                               string(name: 'SANDBOX', value: "${vars[0]}"),
+                               string(name: 'WORK_TABLE_NAME', value: "${vars[1]}"),
+                               string(name: 'DATA_RETENTION', value: "${vars[2]}"),
+                               string(name: 'DATE_FIELD_DRIVING_HISTORIZATION', value: "${vars[3]}"),
+                               string(name: 'IGNORE_FIELD_CDC', value: "${vars[4]}"),
+                               string(name: 'TRANSCODE_FIELD_NAME', value: "${vars[5]}"),
+                               string(name: 'DELETE_INFO', value: "${vars[6]}"),
+                               string(name: 'SOURCE_FILE_PATH', value: "${vars[7]}"),
+                               string(name: 'ARCHIVE_DEL_FLAG', value: "${vars[8]}"),
+                               string(name: 'JOB_NAME', value: "${vars[9]}"),
+                               string(name: 'SCHEDULE_NAME', value: "${vars[10]}"),
+                               string(name: 'SCHEMA_NAME', value: "${vars[11]}"),
+                               string(name: 'TABLE_NAME', value: "${vars[12]}")
+                               ]
+                       }
+
+
+                   }
+
+                   // build job: 'jenkins_excel_creation', parameters: [
+                   //     [$class: 'StringParameterValue', name: 'SANDBOX', value: "${vars[0]}"],
+                   //     [$class: 'StringParameterValue', name: 'PYTHONPATH', value: "${vars[1]}"]
+                   // ]
+
+
+
+                   // def testArray=[]
+                   // new File("files_changex.txt").splitEachLine("[:;]"){
+                   //     line->if(line[0]=='SOME_DETAILS')testArray=line[1..-1]
+                   //     }
+                   // println testArray
+
+                   // sh "git add --chmod=+xrw ${FILES_CHANGED}"
+                   // sh ""
+                   // sh "chmod 777 ${FILES_CHANGED}"
+
+                   // sh "./${FILES_CHANGED}"
+
+               // echo "git diff-tree --no-commit-id --name-only -r <commit-ish>"
+           //   GIT_CLONE = sh (
+               //   script: 'rm -rf capstone_project;git clone https://github.com/kozakjefferson/capstone_project.git',returnStdout: true)
+                   // def data = readFile(file: 'dags/CAMA/ANALOG.env')
+                   // println(data)
+
+              }
+               sh '''
+               echo "done"
+
+               '''
+           }
+       }
+   }
+   post {
+      always {
+          echo "build: ${BUILD_NUMBER}"
+          deleteDir()
+      }
+      success {
+          echo 'successful'
+      }
+      failure {
+          echo 'failed'
+      }
+  }
+}
