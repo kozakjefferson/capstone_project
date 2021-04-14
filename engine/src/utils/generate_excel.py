@@ -28,22 +28,22 @@ Execution Type = C24"""
 class GenerateExcel(object):
 
     def __init__(self):
-        CUR_DIR = os.getcwd()
-        print(CUR_DIR)
+        self.CUR_DIR = os.getcwd()
+        print(self.CUR_DIR)
         print(os.environ)
-        SANDBOX = os.environ['SANDBOX']
-        WORK_TABLE_NAME = os.environ['WORK_TABLE_NAME']
-        DATA_RETENTION = os.environ['DATA_RETENTION']
-        DATE_FIELD_DRIVING_HISTORIZATION = os.environ['DATE_FIELD_DRIVING_HISTORIZATION']
-        IGNORE_FIELD_CDC = os.environ['IGNORE_FIELD_CDC']
-        TRANSCODE_FIELD_NAME = os.environ['TRANSCODE_FIELD_NAME']
-        DELETE_INFO = os.environ['DELETE_INFO']
-        SOURCE_FILE_PATH = os.environ['SOURCE_FILE_PATH']
-        ARCHIVE_DEL_FLAG = os.environ['ARCHIVE_DEL_FLAG']
-        JOB_NAME = os.environ['JOB_NAME']
-        SCHEDULE_NAME = os.environ['SCHEDULE_NAME']
-        SCHEMA_NAME = os.environ['SCHEMA_NAME']
-        TABLE_NAME = os.environ['TABLE_NAME']
+        self.SANDBOX = os.environ['SANDBOX']
+        self.WORK_TABLE_NAME = os.environ['WORK_TABLE_NAME']
+        self.DATA_RETENTION = os.environ['DATA_RETENTION']
+        self.DATE_FIELD_DRIVING_HISTORIZATION = os.environ['DATE_FIELD_DRIVING_HISTORIZATION']
+        self.IGNORE_FIELD_CDC = os.environ['IGNORE_FIELD_CDC']
+        self.TRANSCODE_FIELD_NAME = os.environ['TRANSCODE_FIELD_NAME']
+        self.DELETE_INFO = os.environ['DELETE_INFO']
+        self.SOURCE_FILE_PATH = os.environ['SOURCE_FILE_PATH']
+        self.ARCHIVE_DEL_FLAG = os.environ['ARCHIVE_DEL_FLAG']
+        self.JOB_NAME = os.environ['JOB_NAME']
+        self.SCHEDULE_NAME = os.environ['SCHEDULE_NAME']
+        self.SCHEMA_NAME = os.environ['SCHEMA_NAME']
+        self.TABLE_NAME = os.environ['TABLE_NAME']
 
     # def get_json_file_list(self):
     #     files_list = list()
@@ -194,15 +194,15 @@ class GenerateExcel(object):
 
     def gen_single_file(self, schema_name, table_name):
 
-        file_path = CUR_DIR +'/engine/sources/15. Source Inventory/SOURCE INTERFACE 02.05.000/'
+        file_path = self.CUR_DIR +'/engine/sources/15. Source Inventory/SOURCE INTERFACE 02.05.000/'
         file_path = file_path + schema_name +'/'+ table_name+'.json'
-        folder = CUR_DIR+"/engine/targets/"+schema_name
+        folder = self.CUR_DIR+"/engine/targets/"+schema_name
         try:
             os.mkdir(folder)
         except:
             pass
 
-        with pd.ExcelFile(CUR_DIR+'/engine/template/template_oto_loader.xlsx') as reader:
+        with pd.ExcelFile(self.CUR_DIR+'/engine/template/template_oto_loader.xlsx') as reader:
             sheet_summary = pd.read_excel(reader, sheet_name='Summary')
             sheet_interface = pd.read_excel(reader, sheet_name='Interface Layout')
 
@@ -217,7 +217,7 @@ class GenerateExcel(object):
                 sheet_summary.at[4,col_ref]=data['name']
                 sheet_summary.at[6,col_ref]=data['file name']
                 sheet_summary.at[7,col_ref]=data['markets']
-                sheet_summary.at[8,col_ref]=SANDBOX
+                sheet_summary.at[8,col_ref]=self.SANDBOX
                 sheet_summary.at[9,col_ref]=data['input file type mfs']
                 sheet_summary.at[10,col_ref]=data['mode']
                 sheet_summary.at[11,col_ref]=data['compressed file']
