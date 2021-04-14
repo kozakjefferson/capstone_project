@@ -206,7 +206,7 @@ class GenerateExcel(object):
             sheet_summary = pd.read_excel(reader, sheet_name='Summary')
             sheet_interface = pd.read_excel(reader, sheet_name='Interface Layout')
 
-            data = read_json_file(file_path)
+            data = self.read_json_file(file_path)
             print( schema_name,table_name)
             col_ref = 'Unnamed: 2'
             col_ref_e = 'Unnamed: 2'
