@@ -1,0 +1,1 @@
+{"type": "table", "namespace": "vodafone", "model": "SOURCE INTERFACE 02.05.000", "package": "SOURCE INTERFACE 02.05.000", "name": "DUMMY_STATE", "code": "DUMMY_STATE", "comment": "", "description": "", "dbms model target": "Teradata V13", "row growth rate per year": 10.0, "initial rows": 0.0, "primary key": null, "mapping": [], "column": []}
