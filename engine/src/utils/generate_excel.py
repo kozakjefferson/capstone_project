@@ -63,10 +63,10 @@ class GenerateExcel(object):
     #     return files_list
     #
     #
-    # def read_json_file(self, source_path):
-    #     with open(f'{source_path}') as json_f:
-    #         data = json.load(json_f)
-    #         return data
+    def read_json_file(self, source_path):
+        with open(source_path) as json_f:
+            data = json.load(json_f)
+            return data
     #
     #
     #
