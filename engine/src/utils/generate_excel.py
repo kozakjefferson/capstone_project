@@ -195,7 +195,7 @@ class GenerateExcel(object):
     def gen_single_file(self, schema_name, table_name):
 
         file_path = self.CUR_DIR +'/engine/sources/15. Source Inventory/SOURCE INTERFACE 02.05.000/'
-        file_path = file_path + schema_name +'/'+ table_name+'.json'
+        file_path = file_path + f'{schema_name}/{table_name}'+'.json'
         folder = self.CUR_DIR+"/engine/targets/"+schema_name
         try:
             os.mkdir(folder)
