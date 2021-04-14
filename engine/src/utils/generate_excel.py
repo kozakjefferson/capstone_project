@@ -279,7 +279,7 @@ class GenerateExcel(object):
                 print(schema_name, table_name)
                 print('not saved')
 
-        writer = pd.ExcelWriter(CUR_DIR+'engine/targets/'+schema_name+'/'+table_name+'.xlsx', engine='xlsxwriter')
+        writer = pd.ExcelWriter(self.CUR_DIR+'engine/targets/'+schema_name+'/'+table_name+'.xlsx', engine='xlsxwriter')
         sheet_summary.to_excel(writer, sheet_name='Summary', index=False)
         workbook = writer.book
         sheet_summary = writer.sheets['Summary']
