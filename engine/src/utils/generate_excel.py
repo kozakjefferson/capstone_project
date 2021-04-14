@@ -30,7 +30,6 @@ class GenerateExcel(object):
     def __init__(self):
         self.CUR_DIR = os.getcwd()
         print(self.CUR_DIR)
-        print(os.environ)
         self.SANDBOX = os.environ['SANDBOX']
         self.WORK_TABLE_NAME = os.environ['WORK_TABLE_NAME']
         self.DATA_RETENTION = os.environ['DATA_RETENTION']
