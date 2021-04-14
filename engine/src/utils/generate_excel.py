@@ -70,7 +70,7 @@ class GenerateExcel(object):
                     if json_file == '.DS_Store':
                         pass
                     else:
-                        files_list.append(f'{source_path}{schema}/{json_file}')
+                        files_list.append(f"{source_path}{schema}/{json_file}")
         return files_list
 
 
