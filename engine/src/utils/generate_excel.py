@@ -207,12 +207,13 @@ class GenerateExcel(object):
 
         file_path = CUR_DIR +'/engine/sources/15. Source Inventory/SOURCE INTERFACE 02.05.000/'
         file_path = file_path + schema_name +'/'+ table_name+'.json'
+        folder = CUR_DIR+"engine/targets/+"schema_name
         try:
-            os.mkdir(f'targets/{schema_name}')
+            os.mkdir(folder)
         except:
             pass
 
-        with pd.ExcelFile('template/template_oto_loader.xlsx') as reader:
+        with pd.ExcelFile(CUR_DIR+'/engine/template/template_oto_loader.xlsx') as reader:
             sheet_summary = pd.read_excel(reader, sheet_name='Summary')
             sheet_interface = pd.read_excel(reader, sheet_name='Interface Layout')
 
@@ -289,7 +290,7 @@ class GenerateExcel(object):
                 print(schema_name, table_name)
                 print('not saved')
 
-        writer = pd.ExcelWriter(f'targets/{schema_name}/{table_name}.xlsx', engine='xlsxwriter')
+        writer = pd.ExcelWriter(CUR_DIR+'engine/targets/'+schema_name'/'+table_name+'.xlsx', engine='xlsxwriter')
         sheet_summary.to_excel(writer, sheet_name='Summary', index=False)
         workbook = writer.book
         sheet_summary = writer.sheets['Summary']
