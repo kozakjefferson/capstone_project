@@ -1,8 +1,8 @@
 from engine.src.utils.generate_excel import GenerateExcel
 import os
 
-SCHEMA_NAME = os.environ['SCHEMA_NAME']
-TABLE_NAME = os.environ['TABLE_NAME']
+SCHEMA_NAME = os.environ['SCHEMA_NAME'].split('=')[1]
+TABLE_NAME = os.environ['TABLE_NAME'].split('=')[1]
 
 def run():
     genexcel = GenerateExcel()
