@@ -56,151 +56,151 @@ class GenerateExcel(object):
         SCHEMA_NAME=os.environ['SCHEMA_NAME']
         TABLE_NAME=os.environ['TABLE_NAME']
 
-    def get_json_file_list(self):
-        files_list = list()
-        source_path = CUR_DIR+'/engine/sources/15. Source Inventory/SOURCE INTERFACE 02.05.000/'
-        source_interface_schemas = os.listdir(source_path)
-        for schema in source_interface_schemas:
-            if '.DS_Store'== schema:
-                pass
-            else:
-                json_files = os.listdir(source_path+schema)
-                for json_file in json_files:
-                    print(schema)
-                    if json_file == '.DS_Store':
-                        pass
-                    else:
-                        files_list.append(f"{source_path}{schema}/{json_file}")
-        return files_list
-
-
-    def read_json_file(self, source_path):
-        with open(f'{source_path}') as json_f:
-            data = json.load(json_f)
-            return data
-
-
-
-
-    def gen_all_tables(self):
-
-        for file_path in get_json_file_list():
-            table_name = file_path.split('/')[-1].replace('.json','')
-            schema_name = file_path.split('/')[-2]
-            try:
-                os.mkdir(f'targets/{schema_name}')
-            except:
-                pass
-            # print(schema_name, table_name)
-
-            with pd.ExcelFile('template/template_oto_loader.xlsx') as reader:
-                sheet_summary = pd.read_excel(reader, sheet_name='Summary')
-                sheet_interface = pd.read_excel(reader, sheet_name='Interface Layout')
-
-                data = read_json_file(file_path)
-                print( schema_name,table_name)
-                col_ref = 'Unnamed: 2'
-                col_ref_e = 'Unnamed: 2'
-
-                try:
-                    sheet_summary.at[2,col_ref]=data['ppm id']
-                    # try:
-                    #     sheet_summary.at[2,col_ref]=data['ppm id']
-                    # except:
-                    #     sheet_summary.at[2,col_ref]=""
-                    sheet_summary.at[3,col_ref]=data['project code']
-                    sheet_summary.at[4,col_ref]=data['name']
-                    sheet_summary.at[6,col_ref]=data['file name']
-                    sheet_summary.at[7,col_ref]=data['markets']
-                    sheet_summary.at[8,col_ref]=SANDBOX
-                    sheet_summary.at[9,col_ref]=data['input file type mfs']
-                    sheet_summary.at[10,col_ref]=data['mode']
-                    sheet_summary.at[11,col_ref]=data['compressed file']
-                    sheet_summary.at[12,col_ref]=data['characterset']
-                    sheet_summary.at[13,col_ref]=data['newline delimiter']
-                    sheet_summary.at[14,col_ref_e]=data['delimiter']
-                    sheet_summary.at[14,col_ref]=data['source file type']
-                    sheet_summary.at[15,col_ref]='True'
-                    sheet_summary.at[16,col_ref]=data['ddl template']
-                    sheet_summary.at[17,col_ref]=data['header']
-                    sheet_summary.at[18,col_ref]=data['footer']
-                    sheet_summary.at[19,col_ref]=data['expected volume']
-                    sheet_summary.at[20,col_ref]=data['number of files sent on daily basis']
-                    sheet_summary.at[21,col_ref]=data['execution frequency']
-                    sheet_summary.at[22,col_ref]=data['execution type']
-                    sheet_summary.at[23,col_ref]=data['archival cfm']
-                    sheet_summary.at[23,col_ref_e]=data['archival sa']
-                    # sheet_summary.at[24,col_ref]=data['File Name']
-                    sheet_summary.at[25,col_ref]=data['reference database name [database name] ']
-                    sheet_summary.at[26,col_ref]=data['target table name']
-                    # sheet_summary.at[27,col_ref]=data['File Name']
-                    # sheet_summary.at[28,col_ref]=data['File Name']
-                    # sheet_summary.at[29,col_ref]=data['File Name']
-                    sheet_summary.at[30,col_ref]=data['historization']
-                    sheet_summary.at[31,col_ref]=data['historization type']
-                    sheet_summary.at[32,col_ref]=','.join(data['primary key']['columns'])
-                    # sheet_summary.at[33,col_ref]=data['File Name']
-                    # sheet_summary.at[34,col_ref]=data['File Name']
-                    # sheet_summary.at[34,col_ref]=data['File Name']
-                    # sheet_summary.at[36,col_ref]=data['File Name']
-                    # sheet_summary.at[37,col_ref]=data['File Name']
-                    # sheet_summary.at[38,col_ref]=data['File Name']
-                    # sheet_summary.at[39,col_ref]=data['File Name']
-                    # sheet_summary.at[40,col_ref]=data['File Name']
-                    # sheet_summary.at[41,col_ref]=data['File Name']
-                    # sheet_summary.at[42,col_ref]=data['File Name']
-                    # sheet_summary.at[43,col_ref]=data['File Name']
-
-                    sheet_summary.head(50)
-
-                    sheet_interface.columns
-
-                    from numpy import where
-                    for idx,column in enumerate(data['column']):
-
-                        sheet_interface.at[idx,'Interface Name'] = data['name']
-                        sheet_interface.at[idx,'Interface Field Name'] = column['name']
-                        sheet_interface.at[idx,'Data Type'] = column['conformed data type']
-                        sheet_interface.at[idx,'Length'] = where(column['conformed data type'] == 'datetime,',column['format'],column['fixed field length'])
-                        sheet_interface.at[idx,'Nullable'] = column['nullable']
-                        sheet_interface.at[idx,'Primary Key'] = column['primary']
-                        sheet_interface.at[idx,'Source_Col_Order \n(LOS)'] = int(idx+1)
-                        sheet_interface.at[idx,'Source_Target_Flag\n(LOS)'] = 'S'
-                        sheet_interface.at[idx,'Comment (Optional)'] = ''
-
-
-
-                except:
-                    print(schema_name, table_name)
-                    print('not saved')
-
-            writer = pd.ExcelWriter(f'targets/{schema_name}/{table_name}.xlsx', engine='xlsxwriter')
-            sheet_summary.to_excel(writer, sheet_name='Summary', index=False)
-            workbook = writer.book
-            sheet_summary = writer.sheets['Summary']
-            merge_format = workbook.add_format({
-                'bold': 1,
-                'border': 1,
-                'align': 'center',
-                'valign': 'vcenter',
-                'fg_color': 'orange'})
-
-            # sheet_summary.add_format({'align': 'center', 'valign': 'vcenter', 'border': 2})
-
-            sheet_summary.merge_range('A4:A6', 'Project', merge_format)
-            sheet_summary.merge_range('A8:A25', 'Source', merge_format)
-            sheet_summary.merge_range('A27:A30', 'Target', merge_format)
-            sheet_summary.merge_range('A32:A43', 'Operational', merge_format)
-            # sheet_summary.add_format({'align': 'center', 'valign': 'vcenter', 'border': 2})
-
-
-            # merge_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'border': 2})
-
-
-
-            sheet_interface.to_excel(writer, sheet_name='Interface Layout')
-
-            writer.save()
+    # def get_json_file_list(self):
+    #     files_list = list()
+    #     source_path = CUR_DIR+'/engine/sources/15. Source Inventory/SOURCE INTERFACE 02.05.000/'
+    #     source_interface_schemas = os.listdir(source_path)
+    #     for schema in source_interface_schemas:
+    #         if '.DS_Store'== schema:
+    #             pass
+    #         else:
+    #             json_files = os.listdir(source_path+schema)
+    #             for json_file in json_files:
+    #                 print(schema)
+    #                 if json_file == '.DS_Store':
+    #                     pass
+    #                 else:
+    #                     files_list.append(f"{source_path}{schema}/{json_file}")
+    #     return files_list
+    #
+    #
+    # def read_json_file(self, source_path):
+    #     with open(f'{source_path}') as json_f:
+    #         data = json.load(json_f)
+    #         return data
+    #
+    #
+    #
+    #
+    # def gen_all_tables(self):
+    #
+    #     for file_path in get_json_file_list():
+    #         table_name = file_path.split('/')[-1].replace('.json','')
+    #         schema_name = file_path.split('/')[-2]
+    #         try:
+    #             os.mkdir(f'targets/{schema_name}')
+    #         except:
+    #             pass
+    #         # print(schema_name, table_name)
+    #
+    #         with pd.ExcelFile('template/template_oto_loader.xlsx') as reader:
+    #             sheet_summary = pd.read_excel(reader, sheet_name='Summary')
+    #             sheet_interface = pd.read_excel(reader, sheet_name='Interface Layout')
+    #
+    #             data = read_json_file(file_path)
+    #             print( schema_name,table_name)
+    #             col_ref = 'Unnamed: 2'
+    #             col_ref_e = 'Unnamed: 2'
+    #
+    #             try:
+    #                 sheet_summary.at[2,col_ref]=data['ppm id']
+    #                 # try:
+    #                 #     sheet_summary.at[2,col_ref]=data['ppm id']
+    #                 # except:
+    #                 #     sheet_summary.at[2,col_ref]=""
+    #                 sheet_summary.at[3,col_ref]=data['project code']
+    #                 sheet_summary.at[4,col_ref]=data['name']
+    #                 sheet_summary.at[6,col_ref]=data['file name']
+    #                 sheet_summary.at[7,col_ref]=data['markets']
+    #                 sheet_summary.at[8,col_ref]=SANDBOX
+    #                 sheet_summary.at[9,col_ref]=data['input file type mfs']
+    #                 sheet_summary.at[10,col_ref]=data['mode']
+    #                 sheet_summary.at[11,col_ref]=data['compressed file']
+    #                 sheet_summary.at[12,col_ref]=data['characterset']
+    #                 sheet_summary.at[13,col_ref]=data['newline delimiter']
+    #                 sheet_summary.at[14,col_ref_e]=data['delimiter']
+    #                 sheet_summary.at[14,col_ref]=data['source file type']
+    #                 sheet_summary.at[15,col_ref]='True'
+    #                 sheet_summary.at[16,col_ref]=data['ddl template']
+    #                 sheet_summary.at[17,col_ref]=data['header']
+    #                 sheet_summary.at[18,col_ref]=data['footer']
+    #                 sheet_summary.at[19,col_ref]=data['expected volume']
+    #                 sheet_summary.at[20,col_ref]=data['number of files sent on daily basis']
+    #                 sheet_summary.at[21,col_ref]=data['execution frequency']
+    #                 sheet_summary.at[22,col_ref]=data['execution type']
+    #                 sheet_summary.at[23,col_ref]=data['archival cfm']
+    #                 sheet_summary.at[23,col_ref_e]=data['archival sa']
+    #                 # sheet_summary.at[24,col_ref]=data['File Name']
+    #                 sheet_summary.at[25,col_ref]=data['reference database name [database name] ']
+    #                 sheet_summary.at[26,col_ref]=data['target table name']
+    #                 # sheet_summary.at[27,col_ref]=data['File Name']
+    #                 # sheet_summary.at[28,col_ref]=data['File Name']
+    #                 # sheet_summary.at[29,col_ref]=data['File Name']
+    #                 sheet_summary.at[30,col_ref]=data['historization']
+    #                 sheet_summary.at[31,col_ref]=data['historization type']
+    #                 sheet_summary.at[32,col_ref]=','.join(data['primary key']['columns'])
+    #                 # sheet_summary.at[33,col_ref]=data['File Name']
+    #                 # sheet_summary.at[34,col_ref]=data['File Name']
+    #                 # sheet_summary.at[34,col_ref]=data['File Name']
+    #                 # sheet_summary.at[36,col_ref]=data['File Name']
+    #                 # sheet_summary.at[37,col_ref]=data['File Name']
+    #                 # sheet_summary.at[38,col_ref]=data['File Name']
+    #                 # sheet_summary.at[39,col_ref]=data['File Name']
+    #                 # sheet_summary.at[40,col_ref]=data['File Name']
+    #                 # sheet_summary.at[41,col_ref]=data['File Name']
+    #                 # sheet_summary.at[42,col_ref]=data['File Name']
+    #                 # sheet_summary.at[43,col_ref]=data['File Name']
+    #
+    #                 sheet_summary.head(50)
+    #
+    #                 sheet_interface.columns
+    #
+    #                 from numpy import where
+    #                 for idx,column in enumerate(data['column']):
+    #
+    #                     sheet_interface.at[idx,'Interface Name'] = data['name']
+    #                     sheet_interface.at[idx,'Interface Field Name'] = column['name']
+    #                     sheet_interface.at[idx,'Data Type'] = column['conformed data type']
+    #                     sheet_interface.at[idx,'Length'] = where(column['conformed data type'] == 'datetime,',column['format'],column['fixed field length'])
+    #                     sheet_interface.at[idx,'Nullable'] = column['nullable']
+    #                     sheet_interface.at[idx,'Primary Key'] = column['primary']
+    #                     sheet_interface.at[idx,'Source_Col_Order \n(LOS)'] = int(idx+1)
+    #                     sheet_interface.at[idx,'Source_Target_Flag\n(LOS)'] = 'S'
+    #                     sheet_interface.at[idx,'Comment (Optional)'] = ''
+    #
+    #
+    #
+    #             except:
+    #                 print(schema_name, table_name)
+    #                 print('not saved')
+    #
+    #         writer = pd.ExcelWriter(f'targets/{schema_name}/{table_name}.xlsx', engine='xlsxwriter')
+    #         sheet_summary.to_excel(writer, sheet_name='Summary', index=False)
+    #         workbook = writer.book
+    #         sheet_summary = writer.sheets['Summary']
+    #         merge_format = workbook.add_format({
+    #             'bold': 1,
+    #             'border': 1,
+    #             'align': 'center',
+    #             'valign': 'vcenter',
+    #             'fg_color': 'orange'})
+    #
+    #         # sheet_summary.add_format({'align': 'center', 'valign': 'vcenter', 'border': 2})
+    #
+    #         sheet_summary.merge_range('A4:A6', 'Project', merge_format)
+    #         sheet_summary.merge_range('A8:A25', 'Source', merge_format)
+    #         sheet_summary.merge_range('A27:A30', 'Target', merge_format)
+    #         sheet_summary.merge_range('A32:A43', 'Operational', merge_format)
+    #         # sheet_summary.add_format({'align': 'center', 'valign': 'vcenter', 'border': 2})
+    #
+    #
+    #         # merge_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'border': 2})
+    #
+    #
+    #
+    #         sheet_interface.to_excel(writer, sheet_name='Interface Layout')
+    #
+    #         writer.save()
 
 
     def gen_single_file(self, schema_name, table_name):
